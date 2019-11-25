@@ -39,13 +39,13 @@ toDo.appendChild(listPanel);
 const taskList = document.createElement('ul')
 taskList.className = 'itemList';
 
+
 //Wyszukiwania zadanego taska
 const searchTask = (event) => {
     event.preventDefault();
     const searchValue = inputSearch.value.toLocaleLowerCase();
     let searchSpecificTask = [...taskTable];
     searchSpecificTask = searchSpecificTask.filter(item => item.textContent.toLocaleLowerCase().includes(searchValue));
-    console.log(searchSpecificTask);
     listPanel.textContent = '';
     searchSpecificTask.forEach(li => listPanel.appendChild(li));
 }
@@ -65,12 +65,18 @@ const checkedTask = (event) => {
     }
 }
 
+//musze zdobyc index usuwanego
 
 //usuniecie rzeczy(zadania), po kliknieciu w button remove item
 const removeTask = (event) => {
     event.preventDefault();
+    console.log(event.target.parentNode);
     event.target.parentNode.remove();
-    taskTable.splice(event.target.parentNode, 1); //usun z tablicy wskazany do usuniecia
+    //pobranie indexu elementu, ktory bedzie do usuniecia, zeby odjac go od tablicy, bo jakbym robil taskTable.splice(event.target.parentNode, 1), to by mi nieprawidlowo usuwalo, przy search, usuwalo by mi zawsze pierwszy element jaki jest (z samej gory), w zwykylm usuwaniu, kiedy nie usuwam niczego w search, to by dzialalo (czyli te elementy, ktore sa po dodaniu poprzez Add)
+    //https://stackoverflow.com/questions/8801787/get-index-of-clicked-element-using-pure-javascript
+    const index = [...taskTable].indexOf(event.target.parentNode);
+    console.log(index);
+    taskTable.splice(index, 1); //usun z tablicy wskazany do usuniecia
     addCounter -= 1;
     counter -= 1; // jak usune wszystkie dodane taski to usun mi z listPanelu klase listPanelBorder, zeby niebylo niepotrzebnego bordera
     counterP.textContent = `Tasks: ${counter}`;
@@ -86,8 +92,6 @@ const removeTask = (event) => {
     if (addCounter === 0) { //usun counterPanel jesli addCounter jes rowny 0
         toDo.removeChild(counterPanel);
     }
-
-
 }
 
 //Dodawanie taska
